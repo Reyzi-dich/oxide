@@ -1,5 +1,5 @@
 [package]
-name = "oxide-engine"
+name = "oxide-runtime"
 
 version.workspace = true
 edition.workspace = true

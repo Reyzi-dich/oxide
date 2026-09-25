@@ -1,4 +1,3 @@
-mod engine;
 mod runtime;
 mod journal;
 
@@ -6,7 +5,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use engine::{ Engine, EngineOptions };
+use runtime::{ Runtime, RuntimeOptions };
 
 #[derive(Parser)]
 struct Args {
@@ -22,9 +21,9 @@ struct Args {
 fn main() {
   let args = Args::parse();
 
-  let mut engine = Engine::new(args.name);
+  let mut runtime = Runtime::new(args.name);
   
-  if let Err(error) = engine.run() {
+  if let Err(error) = runtime.run() {
     eprintln!("{error}");
 
     std::process::exit(1);
