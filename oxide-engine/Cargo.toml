@@ -7,10 +7,10 @@ license.workspace = true
 authors.workspace = true
 
 [dependencies]
-chrono = "0.4.45"
-clap = { version = "4.6.7", features = ["derive"] }
-glib = "0.22.10"
-gtk4 = "0.11.5"
-gtk4-layer-shell = "0.8.1"
-mlua = { version = "0.12.1", features = ["luau", "vendored", "async", "serialize"] }
-thiserror = "2.0.20"
+gtk4-layer-shell = { workspace = true }
+thiserror =        { workspace = true }
+chrono =           { workspace = true }
+gtk4 =             { workspace = true }
+glib =             { workspace = true }
+mlua =             { workspace = true }
+clap =             { workspace = true }
