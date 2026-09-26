@@ -5,9 +5,9 @@
 <h1 align="center">Oxide</h1>
 
 <p align="center">
-  <a href="https://github.com/your-username/oxide"><img src="https://img.shields.io/badge/platform-Linux-blue" alt="Platform"></a>
+  <img src="https://img.shields.io/badge/platform-Linux-blue" alt="Platform"></a>
+  <img src="https://img.shields.io/badge/core-Rust%20%7C%20Luau-orange" alt="Language"></a>
   <a href="https://www.gtk.org/"><img src="https://img.shields.io/badge/GUI-GTK4-green" alt="GUI Engine"></a>
-  <a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/core-Rust%20%7C%20Luau-orange" alt="Language"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-brightgreen" alt="License"></a>
 </p>
 
