@@ -14,7 +14,7 @@ pub mod journal;
 pub mod manager;
 
 /*
-  Форматирует запись в другой формат, например, текст
+  Форматирует запись в другой формат, например, цветной текст или json
 */
 pub mod formatter;
 
@@ -22,3 +22,10 @@ pub mod formatter;
   Выводит форматированный вывод, наприрмер, в терминал или файл
 */
 pub mod sink;
+
+
+/*
+  Pub re-exports
+*/
+pub use entry::{ JournalEntry, JournalEntryCategory, JournalEntryLevel };
+pub use journal::{ Journal, JournalError };
