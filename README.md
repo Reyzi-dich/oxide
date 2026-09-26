@@ -21,8 +21,9 @@ The project combines the security and speed of **Rust** with the flexibility and
 
 ## Documentation
 
-- **[Architecture Decisions & Philosophy](docs/architecture-decisions.md)** — Detailed rationale behind structural choices, invariants, and implementation patterns.
+- **[Architecture Decisions & Philosophy](docs/architecture-decisions.md)** - Detailed rationale behind structural choices, invariants, and implementation patterns.
 
 ## License
 
-This project is licensed under the **GPL-3.0-or-later** (or MIT / Apache-2.0, depending on your choice) — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **GPL-3.0-or-later** - see the [LICENSE](LICENSE) file for details.
+
