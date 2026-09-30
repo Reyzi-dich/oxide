@@ -1,10 +1,11 @@
 use std::collections::VecDeque;
 
-use thiserror::Error;
-
-use crate::journal::journal::JournalError::ZeroCapacity;
-
-use super::{ JournalEntry };
+use super::{
+  JournalEntry,
+  JournalError,
+  JournalOperationalError,
+  JournalInternalError
+};
 
 
 #[derive(Debug, Error, PartialEq, Eq)]

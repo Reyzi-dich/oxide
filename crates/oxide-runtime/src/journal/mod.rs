@@ -6,4 +6,6 @@ pub mod formatter;
 pub mod sink;
 
 pub use entry::{ JournalEntry, JournalEntryCategory, JournalEntryLevel };
-pub use journal::{ Journal, JournalError };
+pub use journal::{ Journal };
+pub use id::{ JournalId };
+
