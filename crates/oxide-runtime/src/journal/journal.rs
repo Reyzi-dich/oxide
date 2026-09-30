@@ -7,13 +7,6 @@ use super::{
   JournalInternalError
 };
 
-
-#[derive(Debug, Error, PartialEq, Eq)]
-pub enum JournalError {
-  #[error("Journal capacity must be greater than 0")]
-  ZeroCapacity,
-}
-
 /* 
   * VecDeque - это двусторонний кольцевой буфер с фиксированной вместимостью(`capacity``).
 
@@ -37,33 +30,43 @@ pub enum JournalError {
 */
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Journal {
+  name: String,
+
   capacity: usize,
   entries:  VecDeque<JournalEntry>
 }
 
 impl Journal {
-  /*
-    - Создание пустого журнала.
-  */
-  pub fn new(capacity: usize) -> Result<Self, JournalError> {
+  pub fn new(
+    name:     impl Into<String>, 
+    capacity: usize
+  ) -> Result<Self, JournalError> {
     if capacity == 0 {
-      return Err(ZeroCapacity);
+      return Err(
+        JournalError::Operational(
+          JournalOperationalError::ZeroCapacity
+        )
+      );
     }
+
+    let name = name.into();
 
     let entries = VecDeque::with_capacity(capacity);
     
     Ok(Self {
+      name,
       capacity,
       entries
     })
   }
 
-  /*
-    - Изменение вместимости журнала на лету.
-  */
   pub fn set_capacity(&mut self, new_capacity: usize) -> Result<(), JournalError> {
     if new_capacity == 0 {
-      return Err(JournalError::ZeroCapacity);
+      return Err(
+        JournalError::Operational(
+          JournalOperationalError::ZeroCapacity
+        )
+      );
     }
 
     self.capacity = new_capacity;
@@ -134,7 +137,7 @@ mod tests {
 
   #[test]
   fn test_ring_buffer_overflow() {
-    let mut journal = Journal::new(2).unwrap();
+    let mut journal = Journal::new("org.test.journal", 2).unwrap();
     
     journal.push(make_entry("first"));
     journal.push(make_entry("second"));
@@ -147,12 +150,19 @@ mod tests {
 
   #[test]
   fn test_zero_capacity_error() {
-    assert_eq!(Journal::new(0), Err(JournalError::ZeroCapacity));
+    assert_eq!(
+      Journal::new("org.test.journal", 0), 
+      Err(
+        JournalError::Operational(
+          JournalOperationalError::ZeroCapacity
+        )
+      )
+    );
   }
 
   #[test]
   fn test_shrink_capacity() {
-    let mut journal = Journal::new(5).unwrap();
+    let mut journal = Journal::new("org.test.journal", 5).unwrap();
 
     for i in 0..5 {
       journal.push(make_entry(&format!("msg {i}")));
