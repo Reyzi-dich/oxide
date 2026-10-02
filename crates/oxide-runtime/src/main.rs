@@ -18,15 +18,12 @@ struct Args {
   debug: bool
 }
 
-fn main() {
+fn main() -> miette::Result<()> {
   let args = Args::parse();
 
   let mut runtime = Runtime::new(args.name);
   
-  if let Err(error) = runtime.run() {
-    eprintln!("{error}");
+  runtime.run()?;
 
-    std::process::exit(1);
-  }
-
+  Ok(())
 }

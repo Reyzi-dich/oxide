@@ -1,6 +1,8 @@
 use std::io;
 use std::path::PathBuf;
 
+use miette::Diagnostic;
+use thiserror::Error;
 use mlua::Lua;
 
 #[derive(Debug)]
@@ -16,28 +18,40 @@ pub struct RuntimeOptions {
   trace: bool
 }
 
-#[derive(Debug, thiserror::Error)]
-pub enum InitError {
-  #[error("Failed to read entry file '{path}': {error}")]
-  EntryFileReadFailed { path: PathBuf, error: io::Error },
-
-  #[error("Failed to initialize Luau VM: {0}")]
-  LuaInitFailed(#[from] mlua::Error),
-}
-
-#[derive(Debug, thiserror::Error)]
-pub enum ExecutionError {
-  #[error("Script execution failed: {0}")]
-  LuaScriptFailed(#[from] mlua::Error),
-}
-
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Error, Diagnostic)]
 pub enum RuntimeError {
-  #[error("Initialization error: {0}")]
-  Init(#[from] InitError),
+  #[error("runtime initialization failed")]
+  #[diagnostic(code(oxide::runtime::init_failed))]
+  Init(#[from] #[source] InitError),
 
-  #[error("Execution error: {0}")]
-  Execution(#[from] ExecutionError),
+  #[error("runtime execution failed")]
+  #[diagnostic(code(oxide::runtime::execution_failed))]
+  Execution(#[from] #[source] ExecutionError),
+}
+
+#[derive(Debug, Error, Diagnostic)]
+pub enum InitError {
+  #[error("failed to read entry file '{path}'")]
+  #[diagnostic(
+    code(oxide::runtime::init::entry_file_read_failed),
+    help("check if the path exists and oxide has read permissions")
+  )]
+  EntryFileReadFailed {
+    path: PathBuf,
+    #[source]
+    error: std::io::Error,
+  },
+
+  #[error("failed to initialize Luau VM")]
+  #[diagnostic(code(oxide::runtime::init::luau_init_failed))]
+  LuaInitFailed(#[from] #[source] mlua::Error),
+}
+
+#[derive(Debug, Error, Diagnostic)]
+pub enum ExecutionError {
+  #[error("script execution failed")]
+  #[diagnostic(code(oxide::runtime::execution::script_failed))]
+  LuaScriptFailed(#[from] #[source] mlua::Error),
 }
 
 impl Runtime {
