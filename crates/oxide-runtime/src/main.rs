@@ -21,9 +21,9 @@ struct Args {
 fn main() -> miette::Result<()> {
   let args = Args::parse();
 
-  let mut runtime = Runtime::new(args.name);
+  let mut runtime = Runtime::new();
   
-  runtime.run()?;
+  runtime.run(&args.name)?;
 
   Ok(())
 }

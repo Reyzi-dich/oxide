@@ -1,13 +1,15 @@
-use std::io;
-use std::path::PathBuf;
+use std::fs;
+use std::path::{ Path, PathBuf };
 
 use miette::Diagnostic;
 use thiserror::Error;
-use mlua::Lua;
+use mlua::{
+  Lua,
+  chunk::Chunk
+};
 
 #[derive(Debug)]
 pub struct Runtime {
-  entry_path: PathBuf,
   options:    RuntimeOptions,
   lua_vm:     Lua
 }
@@ -55,30 +57,39 @@ pub enum ExecutionError {
 }
 
 impl Runtime {
-  pub fn new(entry_path: PathBuf) -> Self {
+  pub fn new() -> Self {
     let options = RuntimeOptions::default();
     let lua_vm  = Lua::new();
 
     Runtime { 
-      entry_path,
       options,
       lua_vm
     }
   }
 
-  fn read_entry_file_content(&self) -> Result<String, InitError> {
-    std::fs::read_to_string(&self.entry_path)
+  fn read_entry_file_content(&self, file_path: &Path) -> Result<String, InitError> {
+    fs::read_to_string(file_path)
       .map_err(|error| {
-        let path = self.entry_path.clone();
+        let path = file_path.to_path_buf();
 
         InitError::EntryFileReadFailed { path, error }
       })
   }
 
-  pub fn run(&mut self) -> Result<(), RuntimeError> {
-    let entry_file_content = self.read_entry_file_content()?;
+  pub fn load(&self, file_path: &Path) -> Result<Chunk, RuntimeError> {
+    let entry_file_content = self.read_entry_file_content(file_path)?;
 
-    
+    Ok(
+      self.lua_vm
+        .load(entry_file_content)
+        .set_name(file_path.to_string_lossy())
+    )
+  }
+
+  pub fn run(&mut self, file_path: &Path) -> Result<(), RuntimeError> {
+    let chunk = self.load(file_path)?;
+
+    chunk.exec().map_err(ExecutionError::from)?;
 
     Ok(())
   }
