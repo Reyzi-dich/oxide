@@ -1,4 +1,5 @@
 mod runtime;
+mod diagnostics;
 mod journal;
 
 use std::path::PathBuf;
