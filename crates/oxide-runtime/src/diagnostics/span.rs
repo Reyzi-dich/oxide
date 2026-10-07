@@ -1,9 +1,9 @@
 use miette::SourceSpan;
 
-use super::LuauError;
+use super::LuauDiagnostic;
 
 
-impl LuauError {
+impl LuauDiagnostic {
   /*
     - Вычисляет точный байтовый диапазон `SourceSpan` внутри исходного кода файла
       по целевому номеру строки.
@@ -47,8 +47,8 @@ mod tests {
   use super::*;
   use std::path::PathBuf;
 
-  fn create_dummy_error(line: usize) -> LuauError {
-    LuauError {
+  fn create_dummy_error(line: usize) -> LuauDiagnostic {
+    LuauDiagnostic {
       file_path: PathBuf::from("test.luau"),
       line,
       message: "dummy error message".to_string(),

@@ -3,14 +3,14 @@ use std::path::PathBuf;
 use crate::runtime::error::InitError;
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct LuauError {
+pub struct LuauDiagnostic {
   pub stack_trace: Option<String>,
   pub file_path:   PathBuf,
   pub message:     String,
   pub line:        usize,
 }
 
-impl LuauError {
+impl LuauDiagnostic {
   fn parse(raw_message: &str) -> Result<Self, InitError> {
     // -- Отрезаем начальный префикс `[string "`
     let text_after_prefix = raw_message
@@ -63,7 +63,7 @@ impl LuauError {
       }
     };
 
-    Ok(LuauError {
+    Ok(LuauDiagnostic {
       file_path:   PathBuf::from(extracted_path_str),
       line:        line_number,
       message:     extracted_message,
@@ -80,7 +80,7 @@ mod tests {
   fn test_parse_valid_syntax_error() {
     let raw_error_input = "[string \"examples/test.luau\"]:15: Incomplete statement: expected assignment or a function call";
 
-    let parsed_error = LuauError::parse(raw_error_input).unwrap();
+    let parsed_error = LuauDiagnostic::parse(raw_error_input).unwrap();
 
     assert_eq!(parsed_error.file_path, PathBuf::from("examples/test.luau"));
     assert_eq!(parsed_error.line, 15);
@@ -94,7 +94,7 @@ mod tests {
   fn test_parse_runtime_error_preserves_stack_trace() {
     let raw_error_input = "[string \"src/main.luau\"]:42: attempt to perform arithmetic\nstack traceback:\n\t[string \"src/main.luau\"]:42: in function 'calculate'\n\t[string \"src/main.luau\"]:100: in main chunk";
 
-    let parsed_error = LuauError::parse(raw_error_input).unwrap();
+    let parsed_error = LuauDiagnostic::parse(raw_error_input).unwrap();
 
     assert_eq!(parsed_error.file_path, PathBuf::from("src/main.luau"));
     assert_eq!(parsed_error.line, 42);
@@ -110,7 +110,7 @@ mod tests {
   fn test_parse_error_with_spaces_around_line_and_message() {
     let raw_error_input = "[string \"config.luau\"]:  7  :   unexpected symbol near 'end'  ";
 
-    let parsed_error = LuauError::parse(raw_error_input).unwrap();
+    let parsed_error = LuauDiagnostic::parse(raw_error_input).unwrap();
 
     assert_eq!(parsed_error.file_path, PathBuf::from("config.luau"));
     assert_eq!(parsed_error.line, 7);

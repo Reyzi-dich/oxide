@@ -1,4 +1,4 @@
 pub mod error_parser;
 pub mod span;
 
-pub use error_parser::LuauError;
+pub use error_parser::LuauDiagnostic;
