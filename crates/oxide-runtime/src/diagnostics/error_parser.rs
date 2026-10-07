@@ -11,7 +11,7 @@ pub struct LuauDiagnostic {
 }
 
 impl LuauDiagnostic {
-  fn from_raw(raw_message: &str) -> Result<Self, InitError> {
+  fn from_raw(raw_message: &str) -> Option<Self> {
     // -- Отрезаем начальный префикс `[string "`
     let text_after_prefix = raw_message
       .strip_prefix("[string \"")
@@ -37,7 +37,7 @@ impl LuauDiagnostic {
     let line_number = line_number_str
       .trim()
       .parse::<usize>()
-      .expect("номер строки в ошибке Luau не является числом");
+      .ok()?;
 
     // -- Забираем остаток текста ошибки
     let full_remaining_text = &text_after_path[line_number_delimiter_position + 1..];
@@ -63,7 +63,7 @@ impl LuauDiagnostic {
       }
     };
 
-    Ok(LuauDiagnostic {
+    Some(LuauDiagnostic {
       file_path:   PathBuf::from(extracted_path_str),
       line:        line_number,
       message:     extracted_message,
