@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use crate::runtime::error::InitError;
-
 #[derive(Debug, PartialEq, Eq)]
 pub struct LuauDiagnostic {
   pub stack_trace: Option<String>,
