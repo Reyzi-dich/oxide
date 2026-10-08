@@ -9,16 +9,18 @@ pub struct LuauDiagnostic {
 }
 
 impl LuauDiagnostic {
+  /*
+    ? Почему возрощает `Option<Self>`, а не `Result<Self, Error>`?
+    ! Если функция не может спарсить какую либо часть, она вернёт `None`, 
+      а причину запишет в дебаг журнал(пока что, его здесь нет, но он тут будет).
+      В случае None, вызывающий должен будет сделать фолбек и вывести сырую строку как есть.
+  */
   fn from_raw(raw_message: &str) -> Option<Self> {
     // -- Отрезаем начальный префикс `[string "`
-    let text_after_prefix = raw_message
-      .strip_prefix("[string \"")
-      .expect("строка ошибки Luau должна начинаться с '[string \"'");
+    let text_after_prefix = raw_message.strip_prefix("[string \"")?;
 
     // -- Ищем закрывающую кавычку и двоеточие `"]:`
-    let closing_quote_position = text_after_prefix
-      .find("\"]:")
-      .expect("не найден закрывающий маркер пути '\"]:'");
+    let closing_quote_position = text_after_prefix.find("\"]:")?;
 
     let extracted_path_str = &text_after_prefix[..closing_quote_position];
 
@@ -26,9 +28,7 @@ impl LuauDiagnostic {
     let text_after_path = &text_after_prefix[closing_quote_position + 3..];
 
     // -- Ищем двоеточие, отделяющее номер строки от текста ошибки
-    let line_number_delimiter_position = text_after_path
-      .find(':')
-      .expect("не найдено двоеточие после номера строки");
+    let line_number_delimiter_position = text_after_path.find(':')?;
 
     let line_number_str = &text_after_path[..line_number_delimiter_position];
     
